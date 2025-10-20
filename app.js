@@ -1,3 +1,5 @@
+require('dotenv').config(); // ✅ BENAR: dotenv
+
 const express = require("express");
 const session = require("express-session");
 const bodyParser = require("body-parser");
@@ -5,7 +7,7 @@ const path = require("path");
 const db = require("./config/db"); // koneksi MySQL
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // ================= MIDDLEWARE =================
 app.use(bodyParser.urlencoded({ extended: true }));
