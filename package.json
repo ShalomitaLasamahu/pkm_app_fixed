@@ -7,6 +7,7 @@
     "start": "node app.js",
     "dev": "nodemon app.js",
     "setup-db": "node setup_database.js",
+    "check-status": "node check_app_status.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
