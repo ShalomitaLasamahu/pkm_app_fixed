@@ -10,13 +10,13 @@ const mysql = require('mysql2');
 const fs = require('fs');
 const path = require('path');
 
-// Konfigurasi database dengan fallback untuk Railway
+// Konfigurasi database untuk Railway (prioritaskan MYSQL_* variables)
 const dbConfig = {
-  host: process.env.DB_HOST || process.env.MYSQL_HOST || 'localhost',
-  user: process.env.DB_USER || process.env.MYSQL_USER || 'root',
-  password: process.env.DB_PASSWORD || process.env.MYSQL_PASSWORD || '',
-  database: process.env.DB_NAME || process.env.MYSQL_DATABASE || 'pkm_app',
-  port: process.env.DB_PORT || process.env.MYSQL_PORT || 3306,
+  host: process.env.MYSQL_HOST || process.env.DB_HOST || 'localhost',
+  user: process.env.MYSQL_USER || process.env.DB_USER || 'root',
+  password: process.env.MYSQL_PASSWORD || process.env.DB_PASSWORD || '',
+  database: process.env.MYSQL_DATABASE || process.env.DB_NAME || 'pkm_app',
+  port: process.env.MYSQL_PORT || process.env.DB_PORT || 3306,
   multipleStatements: true // Untuk menjalankan multiple SQL statements
 };
 
