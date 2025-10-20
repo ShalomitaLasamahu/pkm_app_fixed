@@ -1,14 +1,13 @@
 const mysql = require("mysql2");
 
-const conn = mysql.createConnection({
-  host: "localhost",
-  user: "root",      
-  password: "",    
-  database: "pkm_db" 
-});
+// PAKAI INI - untuk Railway
+const conn = mysql.createConnection(process.env.DATABASE_URL);
 
 conn.connect((err) => {
-  if (err) throw err;
+  if (err) {
+    console.error("❌ Database connection failed:", err.message);
+    process.exit(1);
+  }
   console.log("✅ Database connected...");
 });
 
