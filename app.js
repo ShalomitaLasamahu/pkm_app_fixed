@@ -12,10 +12,17 @@ const PORT = process.env.PORT || 3000;
 // ================= MIDDLEWARE =================
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json()); // UNTUK API
+
+// Session configuration dengan environment variable
+const sessionSecret = process.env.SESSION_SECRET || "fallback-secret-key-change-in-production";
 app.use(session({
-  secret: "secret-key",
+  secret: sessionSecret,
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: false, // Changed to false for production
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
 }));
 
 // folder public untuk CSS/JS/img
@@ -43,7 +50,10 @@ app.post("/login", (req, res) => {
 
   const query = "SELECT * FROM users WHERE username=? AND password=?";
   db.query(query, [username, password], (err, results) => {
-    if (err) throw err;
+    if (err) {
+      console.error("❌ Login database error:", err);
+      return res.render("login", { message: "❌ Terjadi kesalahan sistem. Silakan coba lagi." });
+    }
 
     if (results.length > 0) {
       req.session.user = results[0]; // simpan user ke session
@@ -111,7 +121,10 @@ app.get("/mahasiswa", (req, res) => {
 
   const query = "SELECT * FROM mahasiswa";
   db.query(query, (err, results) => {
-    if (err) throw err;
+    if (err) {
+      console.error("❌ Mahasiswa query error:", err);
+      return res.status(500).render("error", { message: "Gagal mengambil data mahasiswa" });
+    }
     res.render("mahasiswa/index", { data: results });
   });
 });
@@ -372,7 +385,7 @@ app.post("/rekap/add", (req, res) => {
   }
 
   const query = "INSERT INTO rekap_kehadiran (nim, nama, matkul, pertemuan, status, tanggal) VALUES (?, ?, ?, ?, ?, ?)";
-  
+
   db.query(query, [nim, nama, matkul, pertemuan, status, tanggal], (err, result) => {
     if (err) {
       console.error("❌ Error menyimpan rekap:", err);
@@ -400,12 +413,32 @@ app.get("/users", (req, res) => {
 
   const query = "SELECT * FROM users";
   db.query(query, (err, results) => {
-    if (err) throw err;
+    if (err) {
+      console.error("❌ Users query error:", err);
+      return res.status(500).render("error", { message: "Gagal mengambil data pengguna" });
+    }
     res.render("users/index", { users: results });
+  });
+});
+
+// ================= ERROR HANDLING =================
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error("❌ Global error:", err);
+  res.status(500).render("error", {
+    message: "Terjadi kesalahan sistem. Silakan coba lagi."
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).render("error", {
+    message: "Halaman tidak ditemukan."
   });
 });
 
 // ================= START SERVER =================
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
