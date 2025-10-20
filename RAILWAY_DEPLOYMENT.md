@@ -39,12 +39,33 @@ SESSION_SECRET=<your-secure-session-secret>
 
 ## Database Setup
 
-Pastikan database MySQL sudah dibuat dengan tabel-tabel yang diperlukan:
+### Cara 1: Setup Otomatis (Recommended)
+Setelah aplikasi berhasil deploy, jalankan setup database:
 
-1. `users` - untuk data pengguna
+```bash
+# Di Railway dashboard, buka terminal atau gunakan Railway CLI
+npm run setup-db
+```
+
+### Cara 2: Setup Manual
+Jika setup otomatis gagal, jalankan SQL secara manual:
+
+1. Buka Railway dashboard
+2. Klik pada MySQL service
+3. Pergi ke tab "Database" 
+4. Klik "Connect" untuk membuka database interface
+5. Jalankan file `database_setup.sql` yang sudah disediakan
+
+### Tabel yang Akan Dibuat:
+1. `users` - untuk data pengguna (admin, dosen, mahasiswa)
 2. `mahasiswa` - untuk data mahasiswa
 3. `tasks` - untuk data deadline tugas
 4. `rekap_kehadiran` - untuk data rekap kehadiran
+
+### Default Login Credentials:
+- **Admin**: username: `admin`, password: `admin123`
+- **Dosen**: username: `dosen1`, password: `dosen123`
+- **Mahasiswa**: username: `mhs1`, password: `mhs123`
 
 ## Troubleshooting
 
